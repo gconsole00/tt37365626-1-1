@@ -84,8 +84,8 @@ jobs:
           rm -rf index.m3u8
           rm -rf *.ts
           rm -rf *.html
-          aria2c ${{github.event.inputs.aria_params}} -x 16 "${{ github.event.inputs.dl_url }}" -o video
-          if [[ ${{ github.event.inputs.transcode}} == "true"]]; then
+          aria2c ${{github.event.inputs.aria_params}} -x 16 "${{ github.event.inputs.dl_url }}" --summary-interval=1 -o video
+          if [[ ${{ github.event.inputs.transcode}} == "true" ]]; then
             echo "Transcoding"
             ffmpeg -i video -c:v libx264 -c:a aac -hls_time 10 -hls_list_size 0 -f hls index.m3u8
           else

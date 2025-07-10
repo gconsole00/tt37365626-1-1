@@ -17,6 +17,8 @@ on:
         required: true
         default: 'false'
         type: boolean
+      ffmpeg_params:
+        default: "-map 0:v -map 0:a:0"
 permissions:
   contents: write
 jobs:
@@ -87,7 +89,7 @@ jobs:
           aria2c ${{github.event.inputs.aria_params}} -x 16 "${{ github.event.inputs.dl_url }}" --summary-interval=1 -o video
           if [[ ${{ github.event.inputs.transcode}} == "true" ]]; then
             echo "Transcoding"
-            ffmpeg -i video -map -0:s -c:v libx264 -preset ultrafast -c:a aac -hls_time 10 -hls_list_size 0 -f hls index.m3u8
+            ffmpeg -i video ${{github.event.inputs.ffmpeg_params}} -c:v libx264 -preset ultrafast -c:a aac -hls_time 10 -hls_list_size 0 -f hls index.m3u8
           else
             ffmpeg -i video -map 0 -map -0:s -c copy -start_number 0 -hls_time 6 -hls_list_size 0 -f hls index.m3u8
           fi
